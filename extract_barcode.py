@@ -18,7 +18,7 @@ from scipy import ndimage
 import re
 
 # placeholder
-img_path = "/Users/Nigel/Desktop/Wash U/2019 MS Fall/PennApps/images/caviar.jpeg"
+#img_path = "/Users/Nigel/Desktop/Wash U/2019 MS Fall/PennApps/images/caviar.jpeg"
 
 def extract_barcode(img_path):
     # image = cv2.imread("/Users/Nigel/Desktop/Wash U/2019 MS Fall/PennApps/images/udis.jpeg")
