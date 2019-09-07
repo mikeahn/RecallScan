@@ -35,16 +35,6 @@ function App() {
           </div>
         </form>
       </div>
-      <script src="./../src/choices.js"></script>
-      <script>
-        /*
-        const choices = new Choices('[data-trigger]',
-        {
-          searchEnabled: false,
-          itemSelectText: '',
-        });
-        */
-      </script>
     </div>
   );
 }
