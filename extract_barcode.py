@@ -21,11 +21,6 @@ import re
 #img_path = "/Users/Nigel/Desktop/Wash U/2019 MS Fall/PennApps/images/caviar.jpeg"
 
 def extract_barcode(img_path):
-    # image = cv2.imread("/Users/Nigel/Desktop/Wash U/2019 MS Fall/PennApps/images/udis.jpeg")
-#    image = cv2.imread("/Users/Nigel/Desktop/Wash U/2019 MS Fall/PennApps/images/caviar.jpeg")
-    # image = cv2.imread("/Users/Nigel/Desktop/Wash U/2019 MS Fall/PennApps/images/QQ_fish.jpeg")
-    # image = cv2.imread("/Users/Nigel/Desktop/Wash U/2019 MS Fall/PennApps/images/barcode_02.jpg")
-    #image = cv2.imread("/Users/Nigel/Desktop/Wash U/2019 MS Fall/PennApps/images/test.png")
     image = cv2.imread(img_path)
 
     # display(image.shape)
@@ -35,7 +30,7 @@ def extract_barcode(img_path):
         print(barcode)
         return barcode
     else:
-        # compute the Scharr gradient magnitude representation of the images in both the x and y direction 
+        # computing the Scharr gradient magnitude representation of the images in both the x and y direction 
         # CV_8U is unsigned 8bit/pixel - ie a pixel can have values 0-255, this is the normal range for most image and video formats.
         # CV_32F is float - the pixel can have any value between 0-1.0, this is useful for some sets of calculations on data - but it has to be converted into 8bits to save or display by multiplying each pixel by 255.
         
@@ -52,32 +47,31 @@ def extract_barcode(img_path):
         # gradX=conv2(gray,Dx,mode='same',boundary='symm')
         # gradY=conv2(gray,Dy,mode='same',boundary='symm')
         
-        # subtract the y-gradient from the x-gradient to keep vertical gradient information
+        # subtract y-gradient from the x-gradient to only keep vertical gradient
         gradient = cv2.subtract(gradX, gradY)
         # Scales, calculates absolute values, and converts the result to 8-bit.
         gradient = cv2.convertScaleAbs(gradient)
         imsave(fn('images/output.jpg'),gradient)
         
         # blur and threshold the image
+        # blur will make the barcode region brighter while making the other regions darker
         blurred = cv2.blur(gradient, (9, 9))
         (_, thresh) = cv2.threshold(blurred, 215, 255, cv2.THRESH_BINARY)
         
         # construct a closing kernel and apply it to the thresholded image
-        # kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (21, 7))
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (10, 10))
         # close: dilation then erosion. fills holes.
         closed = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
         
         # perform a series of erosions and dilations
-        closed = cv2.erode(closed, None, iterations = 4)
-        closed = cv2.dilate(closed, None, iterations = 4)
+        closed = cv2.erode(closed, None, iterations = 5)
+        closed = cv2.dilate(closed, None, iterations = 5)
         
-        # find the contours in the thresholded image, then sort the contours
-        # by their area, keeping only the largest one
+        # find the largest components in the thresholded image, and keep the
+        # top 3 largest components
         cnts = cv2.findContours(closed.copy(), cv2.RETR_EXTERNAL,
         	cv2.CHAIN_APPROX_SIMPLE)
         cnts = imutils.grab_contours(cnts)
-        # c = sorted(cnts, key = cv2.contourArea, reverse = True)[0]
         contours = sorted(cnts, key = cv2.contourArea, reverse = True)
         
         imsave(fn('images/blurred.jpg'),blurred)
