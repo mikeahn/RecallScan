@@ -29,11 +29,11 @@ def extract_barcode(img_path):
     image = cv2.imread(img_path)
 
     # display(image.shape)
-    image_rotated = imutils.rotate_bound(image, 90)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     if len(decode(gray))!=0:
         barcode = re.sub('[^0-9]','', str(decode(gray)[0][0]))
         print(barcode)
+        return barcode
     else:
         # compute the Scharr gradient magnitude representation of the images in both the x and y direction 
         # CV_8U is unsigned 8bit/pixel - ie a pixel can have values 0-255, this is the normal range for most image and video formats.
@@ -111,6 +111,9 @@ def extract_barcode(img_path):
             if len(decode(gray_crop_img))!=0:
                 barcode = re.sub('[^0-9]','', str(decode(gray)[0][0]))
                 print(barcode)
+                return barcode
+            else:
+                pass
         # cv2.imshow("Image", image)
         imsave(fn('images/final.jpg'),image)
         
@@ -118,5 +121,6 @@ def extract_barcode(img_path):
         cv2.imshow("Closed", closed)
         cv2.imshow("Image", image)
         cv2.waitKey(0)
+    return -1
         
         
