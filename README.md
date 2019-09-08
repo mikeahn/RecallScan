@@ -1,4 +1,4 @@
-### RecallScan
+# RecallScan
 
 ## Inspiration
 UPC barcodes are standardized global identifiers, which enable products to be sold, reordered and tracked through supply chains.  Accurate product identification starts with the UPC barcode since it is the key to which everything is based upon. To provide better service in alerting the American people to unsafe, hazardous or defective products, six federal agencies with vastly different jurisdictions have joined together to create www.recalls.gov -- a "one stop shop" for U.S. Government recalls.
