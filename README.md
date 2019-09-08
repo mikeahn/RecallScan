@@ -8,14 +8,12 @@ However, it is neither well known nor readily-accessible to the general populati
 We present a novel mobile app that allows users to easily and quickly check the safety of food products during grocery shopping. Simply by overlaying a camera lens provided by the app onto the _barcode_ of the desired food product, RecallScan app scans the barcode, matches with the up-to-date recall database, and provides information about its safety status and its details in real-time. Such information is directly provided from the website(www.recalls.gov), which is the first place such information becomes available to the public.
 
 ## How we built it
-JM: server configuration → recalls.gov web scraping → save metadata(available UPC) to DB, save images 
-Configured Apache and SSL on database API cloud web server
-Authored python Beauti
+Configured Apache and SSL connection on cloud web server
+Authored python BeautifulSoup script that crawls FDA and Consumer Product Safety Commission's recall alert webpage to collect product information and download images
+Imported crawled data to web server database and deployed Flask web app to serve as API endpoint to our application
+Designed an effective API structure for efficient frontend/backend data exchange
+Added a layer of automation on the web server to regularly crawl for new data and minimize manual data management
 
-
-
-
-SH: process image, identify barcode region, scan&read barcode → save UPC to DB
 From web-extracted image of recalled products, separated the image into Scharr gradient in both x and y directions.
 Removed horizontal gradient information to target vertical barcode formats
 Isolated barcode region by blurring unnecessary information and binary thresholding. 
