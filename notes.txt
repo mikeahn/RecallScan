@@ -1,0 +1,13 @@
+# cron job
+```
+# m h  dom mon dow   command
+0 1 * * * /root/anaconda3/bin/python3 /var/www/html/upc-lookup/api/regular_script.py >> ~/cron.log 2>&1
+0 1 * * 1 rm /var/www/html/media/*
+30 1 * * * /root/anaconda3/bin/python3 /var/www/html/upc-lookup/api/csv2sqlite.py >> ~/cron.log 2>&1
+```
+
+# sqlite database
+```
+CREATE TABLE IF NOT EXISTS "recallInfo"(id INTEGER primary key autoincrement, code varchar(15),
+issueDate INTEGER, brandName text, companyName text, productDescription text, recallReason text, url text);
+```
