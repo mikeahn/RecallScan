@@ -1,6 +1,3 @@
-from io import BytesIO
-
-import PIL
 from PIL import Image
 
 from bs4 import BeautifulSoup
@@ -161,10 +158,9 @@ all_rows = table.find_all('tr')
 
 # recall_gov_urls = [x.get('href') for x in all_links]
 
-f = open('queries.txt', 'w+')
+f = open('queries.txt', 'wb+')
 
 flag = "{}. {}"
-
 
 for index, row in enumerate(all_rows):
     cells = row.find_all('td')
@@ -177,6 +173,19 @@ for index, row in enumerate(all_rows):
         subR = requests.get(url)
         subData = subR.text
         subSoup = BeautifulSoup(subData, "html.parser")
+
+        # type (check once again)
+        type_label = subSoup.find(text="Product Type:")
+        try:
+            type_value = type_label.findNext("dd").contents[0]
+        except:
+            pass
+
+        try:
+            if not str(type_value).find(COI):
+                pass
+        except:
+            pass
 
         # timestamp
         announcement_date_label = subSoup.find(text="Company Announcement Date:")
@@ -206,57 +215,42 @@ for index, row in enumerate(all_rows):
 
         # image to nigel function and find upc from the image
         # append upc to upc_matches
-
         # download any images
-
         image_array = [(FDA_URL + x.get('src')) for x in subSoup.find_all(class_="img-responsive")]
         for img_url in image_array:
             img = Image.open(requests.get(img_url, stream=True).raw)
-            path = "d:/hackathon/" + img_url.split("?")[0].split("public/")[1];
-            img.save(path)
-            #
-            a = extract_barcode(path)
-            # a = extract_barcode(img_url)
+            try:
+                path = "d:/hackathon/" + img_url.split("?")[0].split("public/")[1];
+            except:
+                pass
 
-            print(a)
+            try:
+                img.save(path)
+            except:
+                pass
 
+            try:
+                imread_upc = extract_barcode(path)
+            except:
+                pass
 
+            if imread_upc != -1:
+                upc_matches.append(imread_upc)
 
-        #
-        # for upc in upc_matches:
-        #     statement = this_query.format(code=upc, issueDate=announcement_date_timestamp,
-        #                                   brandName=brand_val, companyName=company_value,
-        #                                   productDescription=description_val,
-        #                                   recallReason=recall_reason_val,
-        #                                   url=url)
-        #     f.write(statement)
+        if len(upc_matches) == 0:
+            statement = this_query.format(code="UNAVAILABLE", issueDate=announcement_date_timestamp,
+                                          brandName=brand_val, companyName=company_value,
+                                          productDescription=description_val,
+                                          recallReason=recall_reason_val,
+                                          url=url)
+            f.write(statement.encode('utf8'))
+
+        for upc in upc_matches:
+            statement = this_query.format(code=upc, issueDate=announcement_date_timestamp,
+                                          brandName=brand_val, companyName=company_value,
+                                          productDescription=description_val,
+                                          recallReason=recall_reason_val,
+                                          url=url)
+            f.write(statement.encode('utf8'))
 
 f.close()
-
-# print(info)
-# extract list from the link
-
-
-# recall_gov_urls = [x.get('href') for x in all_links]
-# extract_about(recall_gov_urls)
-#
-# for url in recall_gov_urls:
-#     r = requests.get(url)
-#     data = r.text
-#     soup = BeautifulSoup(data, "html.parser")
-#
-#     # check if this information is category of interest
-#     product_type = soup.find(text="Product Type:")
-#     if product_type is not None:
-#         product_type_value = str(product_type.findNext("dd").contents[0])
-#
-#         if COI in product_type_value:
-#             # first, find inset column that contains our summary information
-#             announcement_date_label = soup.find(text="Company Announcement Date:")
-#             announcement_date_value = announcement_date_label.findNext("dd").contents[0].contents[0]
-#             announcement_date_timestamp = calendar.timegm(time.strptime(announcement_date_value, '%B %d, %Y'))
-#
-#             # des_date_label = soup.find(text="Brand Name:")
-#             # des_val = des_date_label.findNext("dd").find(class_="field--item").contents[0]
-#             # print(des_val)
-#             # print(product_type_value.strip())
